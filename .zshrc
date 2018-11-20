@@ -96,11 +96,16 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+
 alias julia="/Applications/Julia-1.0.app/Contents/Resources/julia/bin/julia"
 alias dco='docker-compose'
 alias dm='docker-machine'
 alias rflx='cd $HOME/Documents/Reflex'
 
-eval "$(docker-machine env default)"
 
 export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
+export SLUGIFY_USES_TEXT_UNIDECODE="yes"
+export AIRFLOW_HOME="~/workspace/airflow"
+alias copypath='pwd|pbcopy'
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home
