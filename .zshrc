@@ -64,6 +64,7 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  osx
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -104,6 +105,10 @@ alias dm='docker-machine'
 alias rflx='cd $HOME/Documents/Reflex'
 
 
+export PGMODELER_ROOT='/Applications/pgmodeler.app'
+export QT_ROOT='/usr/local/Cellar/qt/5.11.2_1'
+export PGSQL_ROOT='/usr/local/Cellar/postgresql@9.6/9.6.10'
+export PGMODELER_SOURCE='/Users/b7e/workspace/pgmodeler'
 export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
 export SLUGIFY_USES_TEXT_UNIDECODE="yes"
 export AIRFLOW_HOME="~/workspace/airflow"
