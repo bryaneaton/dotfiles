@@ -65,6 +65,10 @@ ZSH_THEME="robbyrussell"
 plugins=(
   git
   osx
+  brew
+  docker
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 
 source $ZSH/oh-my-zsh.sh
