@@ -1,0 +1,9 @@
+[Unit]
+Description=Start medaxion tmux session
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/medaxion-tmux
+
+[Install]
+WantedBy=default.target

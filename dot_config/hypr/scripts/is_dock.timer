@@ -1,0 +1,9 @@
+[Unit]
+Description=Runs is dock every 2 seconds
+
+[Timer]
+OnUnitActiveSec=2s
+Unit=is_dock.service
+
+[Install]
+WantedBy=timers.target

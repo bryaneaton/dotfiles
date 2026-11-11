@@ -1,0 +1,13 @@
+tags
+test.sh
+.luarc.json
+nvim
+
+spell/
+lazy-lock.json
+
+# Temporary files
+tmp/
+.cache/
+*.tmp
+*.cache

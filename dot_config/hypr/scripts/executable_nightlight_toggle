@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $(hyprctl hyprsunset identity get) == "true" ]]; then
+	hyprctl hyprsunset temperature 4000 >/dev/null
+	notify-send "Night light enabled" "Display temperature set to 4000K"
+else
+	hyprctl hyprsunset identity true >/dev/null
+	notify-send "Night light disabled" "Display temperature restored"
+fi

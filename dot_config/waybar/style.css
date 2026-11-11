@@ -1,0 +1,174 @@
+@define-color foreground #ffffff;
+@define-color pill       #111827;
+@define-color hover      #333333;
+@define-color accent     #025939;
+@define-color urgent     #eb4d4b;
+@define-color warning    #f5a70a;
+@define-color critical   #f53c3c;
+
+* {
+    font-family: "Fira Sans Semibold", "FiraCode Nerd Font", "Font Awesome 7 Free", sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+window#waybar {
+    background-color: transparent;
+    color: @foreground;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+tooltip {
+    background-color: @pill;
+    border: 1px solid #2a3344;
+    border-radius: 10px;
+}
+
+tooltip label {
+    color: @foreground;
+    padding: 4px;
+}
+
+/* ---------------------------------------------------------------- pills */
+
+#workspaces,
+#window,
+#mpris,
+#clock,
+#custom-weather,
+#privacy,
+#idle_inhibitor,
+#custom-updates,
+#cpu,
+#temperature,
+#custom-gpu,
+#memory,
+#disk,
+#network,
+#custom-mouse,
+#wireplumber,
+#custom-screenshot,
+#tray,
+#custom-power {
+    background-color: @pill;
+    border-radius: 14px;
+    padding: 4px 10px;
+    margin: 4px 0;
+}
+
+/* Hide empty pills (no window title, no music, etc.) */
+#window.empty,
+#mpris.stopped,
+#privacy:not(.privacy-active) {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* ----------------------------------------------------------- workspaces */
+
+#workspaces {
+    padding: 2px 4px;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    margin: 2px 2px;
+    border-radius: 10px;
+    color: @foreground;
+    background-color: transparent;
+    transition: all 0.3s ease-in-out;
+    font-size: 13px;
+}
+
+#workspaces button.active {
+    background-color: @accent;
+}
+
+#workspaces button:hover {
+    background-color: @hover;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+#workspaces button.urgent {
+    background-color: @urgent;
+}
+
+/* --------------------------------------------------------------- colors */
+
+#window         { color: #c8d2e0; font-weight: 800; }
+#mpris          { color: #66cc99; }
+#mpris.paused   { color: #8a9a92; }
+#clock          { color: #c8d2e0; }
+#custom-weather { color: #dbd9d8; }
+#custom-updates { color: #8fbcbb; }
+#cpu            { color: #fb958b; }
+#temperature    { color: #f0b27a; }
+#custom-gpu     { color: #f7768e; }
+#memory         { color: #ebcb8b; }
+#disk           { color: #d8a47f; }
+#network        { color: #b48ead; }
+#custom-mouse   { color: #c0caf5; }
+#custom-mouse.full,
+#custom-mouse.high,
+#custom-mouse.normal,
+#custom-mouse.charging { color: #a6e3a1; }
+#wireplumber    { color: #fab387; }
+#custom-power   { color: #eb937d; }
+
+#idle_inhibitor           { color: #707d9d; }
+#idle_inhibitor.activated { color: @pill; background-color: #ecf0f1; }
+
+#wireplumber.source        { color: #a6e3a1; }
+#wireplumber.source.muted,
+#wireplumber.muted         { color: #707d9d; }
+
+#network.disconnected,
+#network.linked            { color: @critical; }
+
+#disk.warning              { color: @warning; }
+#custom-mouse.low          { color: @warning; }
+
+/* ------------------------------------------------------------- alerts */
+
+@keyframes blink {
+    to {
+        background-color: rgba(30, 34, 42, 0.5);
+        color: #abb2bf;
+    }
+}
+
+#temperature.critical,
+#disk.critical,
+#custom-mouse.critical {
+    color: @critical;
+    animation-name: blink;
+    animation-duration: 0.8s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#privacy-item {
+    padding: 0 3px;
+    color: @critical;
+}
+
+/* ----------------------------------------------------------------- tray */
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @urgent;
+}

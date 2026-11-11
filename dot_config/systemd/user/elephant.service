@@ -1,0 +1,27 @@
+[Unit]
+Description=Elephant Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Change this to the actual executable path
+ExecStart=/usr/bin/elephant
+
+# Optional working directory
+WorkingDirectory=%h
+
+# Restart if it crashes or exits
+Restart=always
+RestartSec=5
+
+# Better logging
+StandardOutput=journal
+StandardError=journal
+
+# Optional environment variables
+# Environment=NODE_ENV=production
+
+[Install]
+WantedBy=default.target

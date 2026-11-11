@@ -1,0 +1,199 @@
+#!/usr/bin/env fish
+
+# Configuration options
+set -g CHECK_ISORT true
+set -g CHECK_BLACK true
+set -g CHECK_FLAKE8 true
+set -g CHECK_PYDOCLINT true
+set -g CHECK_MYPY true
+set -g VERBOSE true
+set -g AUTO_ADD true
+
+# Check if required tools are installed
+function check_requirements
+    set -l missing_tools
+    
+    if $CHECK_ISORT; and not command -q isort
+        set -a missing_tools "isort"
+    end
+    
+    if $CHECK_BLACK; and not command -q black
+        set -a missing_tools "black"
+    end
+    
+    if $CHECK_FLAKE8; and not command -q flake8
+        set -a missing_tools "flake8"
+    end
+    
+    if $CHECK_PYDOCLINT; and not command -q pydoclint
+        set -a missing_tools "pydoclint"
+    end
+    
+    if $CHECK_MYPY; and not command -q mypy
+        set -a missing_tools "mypy"
+    end
+    
+    if test (count $missing_tools) -gt 0
+        echo "Error: The following required tools are missing:"
+        for tool in $missing_tools
+            echo "  - $tool"
+        end
+        echo "Please install them using pip:"
+        echo "  pip install "(string join " " $missing_tools)
+        return 1
+    end
+    
+    return 0
+end
+
+# Format a single file
+function heavy_format_file
+    set -l file $argv[1]
+    set -l errors 0
+    set -l summary ""
+    
+    if test ! -f $file
+        echo "Error: File not found: $file"
+        return 1
+    end
+    
+    if $VERBOSE
+        echo "Processing $file..."
+    end
+    
+    # Run isort
+    if $CHECK_ISORT
+        if $VERBOSE
+            echo "  Running isort..."
+        end
+        isort $file
+        if test $status -ne 0
+            set errors (math $errors + 1)
+            set -a summary "isort failed"
+        end
+    end
+    
+    # Run black
+    if $CHECK_BLACK
+        if $VERBOSE
+            echo "  Running black..."
+        end
+        black $file
+        if test $status -ne 0
+            set errors (math $errors + 1)
+            set -a summary "black failed"
+        end
+    end
+    
+    # Run flake8
+    if $CHECK_FLAKE8
+        if $VERBOSE
+            echo "  Running flake8..."
+        end
+        flake8 $file
+        if test $status -ne 0
+            set errors (math $errors + 1)
+            set -a summary "flake8 check failed"
+        end
+    end
+    
+    # Run pydoclint
+    if $CHECK_PYDOCLINT
+        if $VERBOSE
+            echo "  Running pydoclint..."
+        end
+        pydoclint $file --style=sphinx
+        if test $status -ne 0
+            set errors (math $errors + 1)
+            set -a summary "pydoclint check failed"
+        end
+    end
+    
+    # Run mypy
+    if $CHECK_MYPY
+        if $VERBOSE
+            echo "  Running mypy..."
+        end
+        mypy $file
+        if test $status -ne 0
+            set errors (math $errors + 1)
+            set -a summary "mypy check failed"
+        end
+    end
+    
+    # Add the file to git if auto-add is enabled
+    if $AUTO_ADD
+        git add $file
+    end
+    
+    # Show summary
+    if test $errors -gt 0
+        echo "  ❌ $file: $summary"
+        return 1
+    else
+        echo "  ✅ $file: All checks passed!"
+        return 0
+    end
+end
+
+# Format all staged Python files
+function heavy_format_files
+    set -l mode $argv[1]
+    set -l files
+    set -l errors 0
+    
+    # Check requirements
+    check_requirements
+    if test $status -ne 0
+        return 1
+    end
+    
+    # Get the appropriate list of files based on mode
+    switch $mode
+        case "staged"
+            # Get only staged Python files (new, modified, or renamed)
+            set files (git diff --cached --name-only --diff-filter=ACMR | grep -E '\.py$')
+        case "modified"
+            # Get all modified Python files (staged and unstaged)
+            set files (git diff --name-only --diff-filter=ACMR | grep -E '\.py$')
+        case "all"
+            # Get all tracked Python files
+            set files (git ls-files | grep -E '\.py$')
+        case '*'
+            echo "Error: Unknown mode '$mode'. Use 'staged', 'modified', or 'all'."
+            return 1
+    end
+    
+    # Check if we found any files
+    if test (count $files) -eq 0
+        echo "No Python files to format."
+        return 0
+    end
+    
+    echo "Found "(count $files)" Python files to format."
+    
+    # Process all files
+    for file in $files
+        heavy_format_file $file
+        if test $status -ne 0
+            set errors (math $errors + 1)
+        end
+    end
+    
+    # Show summary
+    if test $errors -gt 0
+        echo "⚠️ Completed with $errors error(s)."
+        return 1
+    else
+        echo "✅ All files formatted successfully!"
+        return 0
+    end
+end
+
+# Set up aliases
+alias ff="heavy_format_file"
+alias ffs="heavy_format_files staged"
+alias ffm="heavy_format_files modified"
+alias ffa="heavy_format_files all"
+
+# Print usage information

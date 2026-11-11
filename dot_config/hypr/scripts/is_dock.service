@@ -1,0 +1,5 @@
+[Unit]
+Description=Is Dock Script
+
+[Service]
+ExecStart=/home/bryan/.config/hypr/scripts/is_dock.sh

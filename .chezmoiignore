@@ -1,0 +1,36 @@
+README.md
+
+# --- secrets: never track ---
+.config/fish/secrets.fish
+.config/fish/fish_variables
+.config/gh/hosts.yml
+.config/opencode/service.json
+.git-credentials
+.ssh/**
+.aws/**
+.gnupg/**
+.docker/config.json
+**/*.pem
+**/*.key
+**/.env
+**/.env.*
+
+# --- nested git repos, deps, caches ---
+**/.git
+**/.git/**
+**/node_modules
+**/node_modules/**
+.config/nvim/.opencode/**
+.config/nvim/tmp/**
+.config/micro/backups/**
+.config/micro/buffers/**
+.tmux/plugins/**
+
+# --- backups and junk ---
+**/*.bak
+**/*.tar.gz
+**/backup-*
+**/backup-*/**
+**/nohup.out
+**/.idea/**
+**/.claude/**

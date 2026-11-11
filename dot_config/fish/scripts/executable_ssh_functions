@@ -1,0 +1,6 @@
+#!/usr/bin/env fish
+
+function db
+    sudo pkill ssh
+    ssh -f -N -L 1433:127.0.0.1:1433 tex
+end

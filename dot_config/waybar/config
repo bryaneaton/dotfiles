@@ -1,0 +1,252 @@
+{
+    // -------------------------------------------------------------------------
+    // Global configuration (desktop: DP-2 5120x1440, Ryzen + Radeon)
+    // -------------------------------------------------------------------------
+
+    "layer": "top",
+    "position": "top",
+    "margin-left": 10,
+    "margin-right": 10,
+    "margin-bottom": 0,
+    "spacing": 5,
+
+    "modules-left": [
+        "hyprland/workspaces",
+        "hyprland/window",
+        "mpris"
+    ],
+    "modules-center": [
+        "clock",
+        "custom/weather"
+    ],
+    "modules-right": [
+        "privacy",
+        "idle_inhibitor",
+        "custom/updates",
+        "cpu",
+        "temperature#cpu",
+        "custom/gpu",
+        "memory",
+        "disk",
+        "network",
+        "custom/mouse",
+        "wireplumber#source",
+        "wireplumber",
+        "custom/screenshot",
+        "tray",
+        "custom/power"
+    ],
+
+    // -------------------------------------------------------------------------
+    // Left
+    // -------------------------------------------------------------------------
+
+    "hyprland/workspaces": {
+        "all-outputs": true,
+        "format": "{name}",
+        "sort-by-number": true,
+        "active-only": false,
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })' >/dev/null",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })' >/dev/null"
+    },
+
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 80,
+        "separate-outputs": true
+    },
+
+    "mpris": {
+        "player": "spotify",
+        "format": "{player_icon}  {artist} – {title}",
+        "format-paused": "{status_icon}  <i>{artist} – {title}</i>",
+        "player-icons": {
+            "default": "",
+            "spotify": ""
+        },
+        "status-icons": {
+            "paused": "󰏤"
+        },
+        "max-length": 60,
+        "tooltip-format": "{player}: {artist} – {title}\n{album}"
+    },
+
+    // -------------------------------------------------------------------------
+    // Center
+    // -------------------------------------------------------------------------
+
+    "clock": {
+        "interval": 60,
+        "format": "󰥔  {:%a %d %b   %H:%M}",
+        "format-alt": "󰸗  {:%Y-%m-%d   %H:%M}",
+        "tooltip-format": "<big>{:%A, %B %d, %Y}</big>\n<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "year",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "days": "<span color='#ecc6d9'>{}</span>",
+                "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+                "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-click-middle": "shift_reset",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+
+    // Retries for ~1 min so a slow network at login doesn't blank it for 30 min
+    "custom/weather": {
+        "interval": 1800,
+        "exec": "for i in 1 2 3 4 5 6; do curl -sf -m 10 'https://wttr.in/35.7564719,-83.9704?u&format=%c+%t' && exit 0; sleep 10; done; exit 1",
+        "format": "{}",
+        "tooltip": false,
+        "on-click": "xdg-open 'https://wttr.in/35.7564719,-83.9704?u'"
+    },
+
+    // -------------------------------------------------------------------------
+    // Right
+    // -------------------------------------------------------------------------
+
+    "privacy": {
+        "icon-size": 14,
+        "icon-spacing": 6,
+        "transition-duration": 250,
+        "modules": [
+            { "type": "screenshare", "tooltip": true },
+            { "type": "audio-in", "tooltip": true }
+        ]
+    },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "󰅶",
+            "deactivated": "󰾪"
+        },
+        "tooltip-format-activated": "Idle inhibitor: ON (screen won't lock)",
+        "tooltip-format-deactivated": "Idle inhibitor: off"
+    },
+
+    "custom/updates": {
+        "format": "󰏗 {}",
+        "interval": 3600,
+        "exec": "checkupdates 2>/dev/null | wc -l | grep -v '^0$'",
+        "signal": 8,
+        "tooltip": false,
+        "on-click": "wezterm start -- sh -c 'paru; pkill -RTMIN+8 waybar'"
+    },
+
+    "cpu": {
+        "interval": 2,
+        "format": "  {usage:>2}%",
+        "tooltip-format": "Max freq: {max_frequency} GHz\nLoad: {load}",
+        "on-click": "wezterm start -- btop"
+    },
+
+    // k10temp Tctl
+    "temperature#cpu": {
+        "interval": 3,
+        "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+        "input-filename": "temp1_input",
+        "critical-threshold": 85,
+        "format": "󰔏 {temperatureC}°C",
+        "format-critical": "󰸁 {temperatureC}°C",
+        "tooltip-format": "CPU (Tctl): {temperatureC}°C",
+        "on-click": "wezterm start -- btop"
+    },
+
+    // Discrete Radeon: busy % + edge temp
+    "custom/gpu": {
+        "interval": 3,
+        "exec": "d=/sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0; printf '%s%% %s°C\\n' \"$(cat $d/gpu_busy_percent)\" \"$(( $(cat $d/hwmon/hwmon*/temp1_input) / 1000 ))\"",
+        "format": "󰢮 {}",
+        "tooltip": false,
+        "on-click": "wezterm start -- btop"
+    },
+
+    "memory": {
+        "interval": 10,
+        "format": "󰍛 {used:0.1f}/{total:0.0f}G",
+        "tooltip-format": "RAM: {used:0.1f} / {total:0.1f} GiB ({percentage}%)\nSwap: {swapUsed:0.1f} / {swapTotal:0.1f} GiB",
+        "on-click": "wezterm start -- btop"
+    },
+
+    "disk": {
+        "interval": 60,
+        "paths": ["/"],
+        "format": "  {free}",
+        "tooltip-format": "{path}: {used} / {total} used ({percentage_used}%)",
+        "states": {
+            "warning": 80,
+            "critical": 90
+        }
+    },
+
+    "network": {
+        "interval": 5,
+        "format-ethernet": "󰈀 {bandwidthDownBytes}",
+        "format-wifi": " {essid} {bandwidthDownBytes}",
+        "format-linked": "󰈀 no IP",
+        "format-disconnected": "󰈂 offline",
+        "min-length": 12,
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr}\nGateway: {gwaddr}\n↓ {bandwidthDownBytes}   ↑ {bandwidthUpBytes}",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname}: {ipaddr}/{cidr}\n↓ {bandwidthDownBytes}   ↑ {bandwidthUpBytes}",
+        "on-click": "nm-connection-editor",
+        "on-click-right": "ip -4 route get 1.1.1.1 | awk '{for(i=1;i<=NF;i++) if($i==\"src\") print $(i+1)}' | tr -d '\\n' | wl-copy"
+    },
+
+    // Logitech mouse: HID++ only reports a coarse level (Full/High/Normal/Low/Critical)
+    "custom/mouse": {
+        "interval": 60,
+        "return-type": "json",
+        "exec": "for d in /sys/class/power_supply/hidpp_battery_*; do [ -r \"$d/capacity_level\" ] || continue; l=$(cat \"$d/capacity_level\"); s=$(cat \"$d/status\"); m=$(cat \"$d/model_name\"); [ \"$s\" = Charging ] && t=\"$l ⚡\" || t=\"$l\"; [ \"$l\" = Unknown ] && { l=Charging; t=\"Charging ⚡\"; }; printf '{\"text\":\"%s\",\"tooltip\":\"%s: %s (%s)\",\"class\":\"%s\"}\\n' \"$t\" \"$m\" \"$l\" \"$s\" \"$(echo $l | tr A-Z a-z)\"; exit 0; done; exit 1",
+        "format": "󰍽 {}"
+    },
+
+    "wireplumber#source": {
+        "node-type": "Audio/Source",
+        "format": "",
+        "format-muted": "",
+        "tooltip-format": "Mic: {volume}% ({node_name})",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
+        "on-click-right": "pavucontrol -t 4",
+        "scroll-step": 5
+    },
+
+    "wireplumber": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "󰝟  muted",
+        "format-icons": ["", "", ""],
+        "tooltip-format": "{node_name}: {volume}%",
+        "max-volume": 100,
+        "scroll-step": 5,
+        "on-click": "pavucontrol",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    },
+
+    "custom/screenshot": {
+        "format": "",
+        "tooltip-format": "Left: full screenshot\nRight: area screenshot",
+        "on-click": "~/.config/hypr/scripts/screenshot_full",
+        "on-click-right": "~/.config/hypr/scripts/screenshot_area"
+    },
+
+    "tray": {
+        "icon-size": 15,
+        "spacing": 6
+    },
+
+    "custom/power": {
+        "format": "󰐥",
+        "tooltip-format": "Left: power menu\nRight: log out",
+        "on-click": "wlogout",
+        "on-click-right": "uwsm stop"
+    }
+}
