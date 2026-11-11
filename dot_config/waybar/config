@@ -206,7 +206,7 @@
     "custom/mouse": {
         "interval": 60,
         "return-type": "json",
-        "exec": "for d in /sys/class/power_supply/hidpp_battery_*; do [ -r \"$d/capacity_level\" ] || continue; l=$(cat \"$d/capacity_level\"); s=$(cat \"$d/status\"); m=$(cat \"$d/model_name\"); [ \"$s\" = Charging ] && t=\"$l ⚡\" || t=\"$l\"; [ \"$l\" = Unknown ] && { l=Charging; t=\"Charging ⚡\"; }; printf '{\"text\":\"%s\",\"tooltip\":\"%s: %s (%s)\",\"class\":\"%s\"}\\n' \"$t\" \"$m\" \"$l\" \"$s\" \"$(echo $l | tr A-Z a-z)\"; exit 0; done; exit 1",
+        "exec": "for d in /sys/class/power_supply/hidpp_battery_*; do [ -r \"$d/capacity_level\" ] || continue; l=$(cat \"$d/capacity_level\"); s=$(cat \"$d/status\"); m=$(cat \"$d/model_name\"); t=\"$l\"; [ \"$l\" = Unknown ] && t=\"?\"; [ \"$s\" = Charging ] && { [ \"$l\" = Unknown ] && t=Charging; t=\"$t ⚡\"; l=Charging; }; printf '{\"text\":\"%s\",\"tooltip\":\"%s: %s (%s)\",\"class\":\"%s\"}\\n' \"$t\" \"$m\" \"$l\" \"$s\" \"$(echo $l | tr A-Z a-z)\"; exit 0; done; exit 1",
         "format": "󰍽 {}"
     },
 

@@ -136,6 +136,7 @@ tooltip label {
 
 #disk.warning              { color: @warning; }
 #custom-mouse.low          { color: @warning; }
+#custom-mouse.unknown      { color: #707d9d; }
 
 /* ------------------------------------------------------------- alerts */
 
