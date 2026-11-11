@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# dotsync: pull local dotfile edits into chezmoi, commit, and push.
+#
+#   dotsync                       re-add changed files, auto commit message
+#   dotsync -m "message"          custom commit message
+#   dotsync ~/.config/foo ...     also start tracking new files/dirs
+#   dotsync -n                    dry run: show what would change
+set -euo pipefail
+
+msg=""
+dry=0
+new=()
+
+usage() { sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; }
+
+while (($#)); do
+	case "$1" in
+	-m | --message) msg="${2:?-m needs a message}"; shift 2 ;;
+	-n | --dry-run) dry=1; shift ;;
+	-h | --help) usage; exit 0 ;;
+	*) new+=("$1"); shift ;;
+	esac
+done
+
+src=$(chezmoi source-path)
+cd "$src"
+
+if ((dry)); then
+	echo "== changed tracked files (home -> repo) =="
+	chezmoi status | grep -E '^.M|^M' || echo "(none)"
+	((${#new[@]})) && printf 'would add: %s\n' "${new[@]}"
+	exit 0
+fi
+
+chezmoi re-add
+((${#new[@]})) && chezmoi add "${new[@]}"
+
+git add -A
+if git diff --cached --quiet; then
+	echo "dotsync: nothing to commit"
+else
+	if [[ -z $msg ]]; then
+		files=$(git diff --cached --name-only | sed -E 's#^(dot_|private_|executable_)+##; s#/(dot_|private_|executable_)+#/#g' | head -5 | paste -sd ', ')
+		count=$(git diff --cached --name-only | wc -l)
+		((count > 5)) && files+=" (+$((count - 5)) more)"
+		msg="Update $files"
+	fi
+	git diff --cached --stat | tail -n 20
+	# pre-commit hook (gitleaks) blocks secrets here
+	git commit -q -m "$msg"
+	echo "dotsync: committed: $msg"
+fi
+
+git pull -q --rebase --autostash
+if [[ -n $(git log '@{u}..' --oneline 2>/dev/null) ]]; then
+	git push -q
+	echo "dotsync: pushed to $(git remote get-url origin)"
+else
+	echo "dotsync: already up to date with remote"
+fi
