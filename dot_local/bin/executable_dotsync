@@ -40,7 +40,7 @@ if git diff --cached --quiet; then
 	echo "dotsync: nothing to commit"
 else
 	if [[ -z $msg ]]; then
-		files=$(git diff --cached --name-only | sed -E 's#^(dot_|private_|executable_)+##; s#/(dot_|private_|executable_)+#/#g' | head -5 | paste -sd ', ')
+		files=$(git diff --cached --name-only | sed -E 's#(^|/)((private|executable|readonly|empty)_)+#\1#g; s#(^|/)dot_#\1.#g' | head -5 | paste -sd ', ')
 		count=$(git diff --cached --name-only | wc -l)
 		((count > 5)) && files+=" (+$((count - 5)) more)"
 		msg="Update $files"
