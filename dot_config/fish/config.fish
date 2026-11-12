@@ -49,7 +49,7 @@ export NPM_CONFIG_LOGLEVEL=warn
 export GIT_AUTHOR_NAME="Bryan Eaton"
 export GIT_AUTHOR_EMAIL="bryan.eaton77@gmail.com"
 export GIT_COMMITTER_NAME="Bryan Eaton"
-export GIT_COMMITTER_EMAIL="beaton@regscale.com"
+export GIT_COMMITTER_EMAIL="bryan.eaton@medaxion.com"
 
 # Development Tools
 export VSCODE_EXTENSIONS="/home/bryan/.vscode/extensions"
