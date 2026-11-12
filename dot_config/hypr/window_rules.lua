@@ -27,7 +27,9 @@ rule({ name = "windowrule-20", match = { class = "^pavucontrol-qt$" }, float = t
 rule({ name = "windowrule-21", match = { class = "^pavucontrol$" }, float = true })
 rule({ name = "windowrule-22", match = { class = "^file-roller$" }, float = true })
 rule({ name = "windowrule-23", match = { class = "^jetbrains-idea$" }, center = true })
-rule({ name = "windowrule-24", match = { class = "^jetbrains-(?!toolbox)$", float = true }, no_initial_focus = true })
+-- JetBrains floating popups shouldn't steal focus; Toolbox is exempt (RE2 has no lookahead, so override it after)
+rule({ name = "jetbrains-popup-nofocus", match = { class = "^jetbrains-.*$", float = true }, no_initial_focus = true })
+rule({ name = "jetbrains-toolbox-focus", match = { class = "^jetbrains-toolbox$" }, no_initial_focus = false })
 rule({ name = "windowrule-25", match = { title = "^Sign in$" }, size = "600 400" })
 rule({ name = "windowrule-26", match = { title = "^wlogout$" }, float = true, fullscreen = true })
 rule({ name = "windowrule-27", match = { class = "^tofi$" }, stay_focused = true })
@@ -58,12 +60,12 @@ rule({
 })
 rule({ name = "windowrule-48", match = { title = "cava$" }, opacity = "1.0 1.0 1.0", tile = true })
 rule({ name = "windowrule-49", match = { title = "^(.*)cava(.*)$" }, opacity = "1.0 override" })
-rule({ name = "windowrule-50", match = { class = "^hoi4$" }, fullscreen = true, monitor = "1", workspace = "10" })
+rule({ name = "windowrule-50", match = { class = "^hoi4$" }, fullscreen = true, monitor = "DP-2", workspace = "10" })
 rule({
 	name = "windowrule-51",
 	match = { class = "^steam_app_\\d+$" },
 	fullscreen = true,
-	monitor = "1",
+	monitor = "DP-2",
 	workspace = "10",
 })
 rule({ name = "windowrule-52", match = { class = "^thunar$" }, workspace = "5" })

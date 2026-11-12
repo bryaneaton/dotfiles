@@ -5,6 +5,7 @@ hl.monitor({
 	mode = "5120x1440",
 	position = "0x0",
 	scale = 1,
+	vrr = 2, -- adaptive sync in fullscreen only (avoids G9 desktop flicker)
 })
 
 hl.config({

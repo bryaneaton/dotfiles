@@ -24,7 +24,6 @@ hl.bind("SUPER + E", sh("thunar"))
 hl.bind("SUPER + R", sh("walker"))
 hl.bind("SUPER + Space", sh("walker"))
 hl.bind("SUPER + M", hl.dsp.dpms("on"))
-hl.bind("SUPER + D", sh("/home/bryan/.config/hypr/scripts/is_dock.sh"))
 hl.bind("SUPER + TAB", hl.dsp.focus({ workspace = "previous" }))
 
 hl.bind(
