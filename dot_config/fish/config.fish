@@ -169,3 +169,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 
 test -f ~/.config/fish/secrets.fish && source ~/.config/fish/secrets.fish	
+
+# opencode
+fish_add_path /home/bryan/.opencode/bin

@@ -159,6 +159,64 @@ hl.on("window.title", function(w)
 	end
 end)
 
+-- Zoom's join/reminder popup maps with the meeting's name as its title, so no
+-- static rule can match it, and it comes up too small (content cut off).
+-- Zoom's own windows map as "Zoom Workplace" or a fixed internal name; anything
+-- else floating from Zoom is treated as a meeting popup and given a usable size.
+-- Zoom may resize the popup after it maps, so re-check a few times after opening.
+local ZOOM_POPUP_MIN = { x = 800, y = 600 }
+
+local zoom_fixed_titles = {
+	["Zoom Workplace"] = true,
+	["Meeting"] = true,
+	["Settings"] = true,
+	["zoom_linux_float_video_window"] = true,
+	["zoom_linux_float_video_window_as_toolbar"] = true,
+	["as_toolbar"] = true,
+	["Zoom - Free Account"] = true,
+	["Zoom - Licensed Account"] = true,
+}
+
+local function is_zoom_meeting_popup(w)
+	if not is_zoom(w) or not w.floating then
+		return false
+	end
+	local t = w.initial_title or ""
+	return t ~= "" and not zoom_fixed_titles[t] and not t:match("^Zoom")
+end
+
+local function fix_zoom_popup(w)
+	if not is_zoom_meeting_popup(w) then
+		return
+	end
+	local width = w.size.x or w.size[1]
+	local height = w.size.y or w.size[2]
+	if width >= ZOOM_POPUP_MIN.x and height >= ZOOM_POPUP_MIN.y then
+		return
+	end
+	hl.dispatch(hl.dsp.window.resize({
+		x = math.max(width, ZOOM_POPUP_MIN.x),
+		y = math.max(height, ZOOM_POPUP_MIN.y),
+		window = w,
+	}))
+	hl.dispatch(hl.dsp.window.center({ window = w }))
+end
+
+hl.on("window.open", function(w)
+	if not is_zoom_meeting_popup(w) then
+		return
+	end
+	fix_zoom_popup(w)
+	local address = "address:" .. w.address
+	for _, delay in ipairs({ 250, 1000 }) do
+		hl.timer(function()
+			fix_zoom_popup(hl.get_window(address))
+		end, { timeout = delay, type = "oneshot" })
+	end
+end)
+
+hl.on("window.title", fix_zoom_popup)
+
 rule({
 	name = "zoom-meeting",
 	match = {
