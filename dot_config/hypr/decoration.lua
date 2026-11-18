@@ -18,6 +18,10 @@ hl.config({
 		disable_hyprland_logo = true,
 		disable_splash_rendering = true,
 		mouse_move_enables_dpms = true,
+		key_press_enables_dpms = true,
+		focus_on_activate = true,
+		disable_scale_notification = true,
+		on_focus_under_fullscreen = 1,
 		enable_swallow = true,
 		swallow_regex = "^(Alacritty|org.wezfurlong.wezterm|note)$",
 	},
@@ -38,8 +42,15 @@ hl.config({
 	animations = {
 		enabled = true,
 	},
+	cursor = {
+		hide_on_key_press = true,
+	},
 	dwindle = {
 		preserve_split = true,
+		force_split = 2, -- new windows always open right/bottom
+	},
+	scrolling = {
+		column_width = 0.49,
 	},
 })
 
@@ -54,3 +65,14 @@ hl.animation({ leaf = "border", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "smoothIn" })
 hl.animation({ leaf = "fadeDim", enabled = true, speed = 3, bezier = "smoothIn" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default" })
+
+-- layer animations (walker, notifications, waybar) from Omarchy
+hl.curve("easeOutQuint", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
+hl.curve("almostLinear", { type = "bezier", points = { { 0.5, 0.5 }, { 0.75, 1.0 } } })
+hl.curve("linear", { type = "bezier", points = { { 0, 0 }, { 1, 1 } } })
+
+hl.animation({ leaf = "layers", enabled = true, speed = 3.81, bezier = "easeOutQuint" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "easeOutQuint", style = "fade" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.79, bezier = "almostLinear" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })

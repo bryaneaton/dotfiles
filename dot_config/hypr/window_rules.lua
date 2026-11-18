@@ -4,6 +4,17 @@ end
 
 hl.layer_rule({ match = { namespace = "^omasnap$" }, no_anim = true, animation = "none" })
 
+-- from Omarchy: apps can't maximize themselves out of the tiling layout
+rule({ name = "suppress-maximize", match = { class = ".*" }, suppress_event = "maximize" })
+-- from Omarchy: fixes XWayland drag-and-drop ghost windows stealing focus
+rule({
+	name = "xwayland-drag-fix",
+	match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },
+	no_focus = true,
+})
+-- from Omarchy: hide Chrome's "... is sharing your screen" bar
+rule({ name = "hide-sharing-bar", match = { title = ".*is sharing.*" }, workspace = "special silent" })
+
 rule({ name = "windowrule-1", match = { class = "^org.kde.polkit-kde-authentication-agent-1$" }, float = true })
 rule({ name = "windowrule-2", match = { title = "^Auto-Configuration Wizard$" }, float = true })
 rule({ name = "windowrule-3", match = { title = "^Confirm to replace files$" }, float = true })
