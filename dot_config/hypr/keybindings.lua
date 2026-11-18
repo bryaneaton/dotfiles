@@ -87,6 +87,14 @@ hl.bind("SUPER + SHIFT + ALT + comma", sh("makoctl restore"), { description = "R
 
 hl.bind("SUPER + F1", sh("~/.config/hypr/scripts/keybindings_menu"), { description = "Show key bindings" })
 
+-- Clipboard
+hl.bind("SUPER + CTRL + V", sh("~/.config/hypr/scripts/clipboard_menu"), { description = "Clipboard history" })
+hl.bind("SUPER + CTRL + Print", sh("~/.config/hypr/scripts/ocr_region"), { description = "Copy text from screen (OCR)" })
+-- CTRL/SHIFT+Insert are copy/paste in both GUI apps and terminals
+hl.bind("SUPER + C", hl.dsp.send_shortcut({ mods = "CTRL", key = "Insert" }), { description = "Universal copy" })
+hl.bind("SUPER + V", hl.dsp.send_shortcut({ mods = "SHIFT", key = "Insert" }), { description = "Universal paste" })
+hl.bind("SUPER + X", hl.dsp.send_shortcut({ mods = "CTRL", key = "X" }), { description = "Universal cut" })
+
 -- Screen zoom
 hl.bind("SUPER + CTRL + Z", function()
 	local zoom = hl.get_config("cursor.zoom_factor") or 1
@@ -109,6 +117,32 @@ hl.bind(
 
 hl.bind("SUPER + Q", hl.dsp.window.close(), { description = "Close window" })
 hl.bind("SUPER + F", hl.dsp.window.fullscreen(), { description = "Fullscreen" })
+hl.bind("SUPER + ALT + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Full width (keep bar and gaps)" })
+hl.bind(
+	"SUPER + CTRL + F",
+	hl.dsp.window.fullscreen_state({ action = "toggle", internal = 0, client = 2 }),
+	{ description = "Tiled fullscreen (app thinks it's fullscreen)" }
+)
+
+local POP_SIZE = { x = 1300, y = 900 }
+hl.bind("SUPER + O", function()
+	local w = hl.get_active_window()
+	if not w then
+		return
+	end
+	if w.pinned then
+		hl.dispatch(hl.dsp.window.pin({ window = w, action = "off" }))
+		hl.dispatch(hl.dsp.window.float({ window = w, action = "off" }))
+		return
+	end
+	if not w.floating then
+		hl.dispatch(hl.dsp.window.float({ window = w, action = "on" }))
+	end
+	hl.dispatch(hl.dsp.window.resize({ window = w, x = POP_SIZE.x, y = POP_SIZE.y }))
+	hl.dispatch(hl.dsp.window.center({ window = w }))
+	hl.dispatch(hl.dsp.window.pin({ window = w, action = "on" }))
+	hl.dispatch(hl.dsp.window.alter_zorder({ window = w, mode = "top" }))
+end, { description = "Pop window out (float and pin)" })
 hl.bind("SUPER + SHIFT + Space", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
 hl.bind("SUPER + P", hl.dsp.window.pseudo(), { description = "Pseudotile window" })
 
@@ -184,6 +218,14 @@ hl.bind("SUPER + CTRL + right", hl.dsp.focus({ workspace = "e+1" }), { descripti
 hl.bind("SUPER + g", hl.dsp.group.toggle(), { description = "Toggle group" })
 hl.bind("SUPER + bracketleft", hl.dsp.group.prev(), { description = "Previous window in group" })
 hl.bind("SUPER + bracketright", hl.dsp.group.next(), { description = "Next window in group" })
+hl.bind("SUPER + ALT + G", hl.dsp.window.move({ out_of_group = true }), { description = "Move window out of group" })
+for key, dir in pairs({ h = "left", l = "right", k = "up", j = "down" }) do
+	hl.bind(
+		"SUPER + CTRL + SHIFT + " .. key,
+		hl.dsp.window.move({ into_group = dir }),
+		{ description = "Move window into group " .. dir }
+	)
+end
 
 hl.bind("SUPER + z", hl.dsp.workspace.toggle_special(), { description = "Toggle special workspace" })
 hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("magic"), { description = "Toggle special workspace magic" })
